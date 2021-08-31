@@ -19,11 +19,13 @@
   },
   "main": "background.js",
   "dependencies": {
+    "base-64": "^1.0.0",
     "core-js": "^3.6.5",
     "electron-icon-builder": "^2.0.1",
     "electron-updater": "^4.3.9",
     "moment-timezone": "^0.5.33",
     "user-agents": "^1.0.757",
+    "utf8": "^3.0.0",
     "vue": "^2.6.11",
     "vue-digital-clock": "^2.0.0",
     "vue-moment": "^4.1.0",

@@ -1,3 +1,5 @@
+'use strict'
+
 import { BrowserWindow, globalShortcut } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 
@@ -6,7 +8,10 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win
 
 export default {
-  async createWindow () {
+  getWindow () {
+    return win
+  },
+  createWindow () {
     // Create the browser window.
     win = new BrowserWindow({
       width: 1122,
@@ -28,7 +33,7 @@ export default {
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-      await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+      win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
       if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
       createProtocol('app')
