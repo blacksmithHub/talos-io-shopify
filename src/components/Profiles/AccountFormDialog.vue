@@ -5,7 +5,7 @@
     max-width="700"
   >
     <v-form @submit.prevent="submit">
-      <v-card>
+      <v-card rounded>
         <v-card-title class="px-0 pt-0">
           <v-toolbar
             dense
@@ -55,6 +55,14 @@
 
         <v-card-actions class="pa-3">
           <v-spacer />
+
+          <v-btn
+            rounded
+            :disabled="loading"
+            small
+            @click="close"
+            v-text="'close'"
+          />
 
           <v-btn
             rounded
@@ -243,11 +251,11 @@ export default {
 
           return val
         })
+      } else {
+        this.accounts = this.setUniqueIds(data, this.accounts)
+
+        data = [...data, ...this.accounts]
       }
-
-      this.accounts = this.setUniqueIds(data, this.accounts)
-
-      data = [...data, ...this.accounts]
 
       this.saveToLocalStorage('accounts', data)
 

@@ -63,6 +63,24 @@ export default {
       })
 
       return newRecords
+    },
+    /**
+     * Set unique names to newly added records
+     *
+     * @param {*} name
+     * @param {*} newData
+     * @returns
+     */
+    setUniqueNames (name, newData) {
+      let data = newData.slice()
+
+      data = data.map((val) => {
+        if (val.id) val.name = `${name}${val.id}`
+
+        return val
+      })
+
+      return data
     }
   }
 }

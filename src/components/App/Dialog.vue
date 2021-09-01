@@ -4,7 +4,7 @@
     width="500"
     persistent
   >
-    <v-card>
+    <v-card rounded>
       <v-card-title style="border-bottom:1px solid #d85820">
         <span
           class="headline primary--text"
