@@ -29,3 +29,4 @@ pnpm-debug.log*
 # storage files
 accounts.json
 billings.json
+groups.json

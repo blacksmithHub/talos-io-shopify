@@ -33,7 +33,7 @@
             :value="accountList"
             hint="Insert new account per line"
             :placeholder="placeholder"
-            filled
+            outlined
             :error-messages="accountsErrors"
             auto-grow
             rows="10"

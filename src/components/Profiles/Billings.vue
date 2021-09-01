@@ -57,7 +57,7 @@
           <v-data-table
             :height="windowSize.y - 105 - 65 - 100 - 77"
             :headers="headers"
-            :items="items"
+            :items="billings"
             disable-filtering
             disable-pagination
             disable-sort
@@ -103,7 +103,7 @@
 
     <BillingFormDialog
       ref="billingFormDialog"
-      @init="init"
+      @init="$emit('init')"
     />
   </div>
 </template>
@@ -119,6 +119,12 @@ export default {
     BillingFormDialog
   },
   mixins: [LocalStorage, File],
+  props: {
+    billings: {
+      type: Array,
+      required: true
+    }
+  },
   data () {
     return {
       windowSize: {
@@ -128,26 +134,12 @@ export default {
       headers: [
         { text: 'name', value: 'name' },
         { text: 'actions', value: 'actions' }
-      ],
-      items: []
+      ]
     }
-  },
-  created () {
-    this.init()
   },
   methods: {
     onResize () {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight }
-    },
-    /**
-     * Initialize list
-     */
-    async init () {
-      await this.getLocalStorage('billings')
-        .then(res => {
-          this.items = res || []
-        })
-        .catch(err => console.log(err))
     },
     /**
      * On edit event
@@ -165,38 +157,45 @@ export default {
      * On delete event
      */
     async onDelete (item) {
-      const index = this.items.findIndex(v => v.id === item.id)
-      this.items.splice(index, 1)
+      const billings = this.billings.slice()
+      const index = billings.findIndex(v => v.id === item.id)
 
-      await this.saveToLocalStorage('billings', this.items)
-      this.init()
+      billings.splice(index, 1)
+
+      await this.saveToLocalStorage('billings', billings)
+
+      this.$emit('init')
     },
     /**
      * Import all billings
      */
     async importFromJson () {
+      let billings = this.billings.slice()
       let data = await this.importJson('Import Billings')
 
       if (data && data.length) {
-        data = this.setUniqueIds(this.items, data)
+        data = this.setUniqueIds(billings, data)
 
-        this.items = [...this.items, ...data]
+        billings = [...billings, ...data]
 
-        await this.saveToLocalStorage('billings', this.items)
-        this.init()
+        await this.saveToLocalStorage('billings', billings)
+
+        this.$emit('init')
       }
     },
     /**
      * Export all billings
      */
     exportToJson () {
-      const data = this.items.slice().map(val => {
+      let billings = this.billings.slice()
+
+      billings = billings.map(val => {
         delete val.id
 
         return val
       })
 
-      this.exportJson(data, 'Export Billings To JSON')
+      this.exportJson(billings, 'Export Billings To JSON')
     }
   }
 }

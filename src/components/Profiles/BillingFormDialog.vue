@@ -20,7 +20,6 @@
               label="Name"
               outlined
               dense
-
               hide-details
               class="ml-5"
             />

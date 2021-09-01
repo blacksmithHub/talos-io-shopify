@@ -57,7 +57,7 @@
           <v-data-table
             :height="windowSize.y - 105 - 65 - 100 - 77"
             :headers="headers"
-            :items="items"
+            :items="accounts"
             disable-filtering
             disable-pagination
             disable-sort
@@ -103,7 +103,7 @@
 
     <AccountFormDialog
       ref="accountFormDialog"
-      @init="init"
+      @init="$emit('init')"
     />
   </div>
 </template>
@@ -119,6 +119,12 @@ export default {
     AccountFormDialog
   },
   mixins: [LocalStorage, File],
+  props: {
+    accounts: {
+      type: Array,
+      required: true
+    }
+  },
   data () {
     return {
       windowSize: {
@@ -128,26 +134,12 @@ export default {
       headers: [
         { text: 'email', value: 'email' },
         { text: 'actions', value: 'actions' }
-      ],
-      items: []
+      ]
     }
-  },
-  created () {
-    this.init()
   },
   methods: {
     onResize () {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight }
-    },
-    /**
-     * Initialize list
-     */
-    async init () {
-      await this.getLocalStorage('accounts')
-        .then(res => {
-          this.items = res || []
-        })
-        .catch(err => console.log(err))
     },
     /**
      * On edit event
@@ -161,38 +153,45 @@ export default {
      * On delete event
      */
     async onDelete (item) {
-      const index = this.items.findIndex(v => v.id === item.id)
-      this.items.splice(index, 1)
+      const accounts = this.accounts.slice()
+      const index = accounts.findIndex(v => v.id === item.id)
 
-      await this.saveToLocalStorage('accounts', this.items)
-      this.init()
+      accounts.splice(index, 1)
+
+      await this.saveToLocalStorage('accounts', accounts)
+
+      this.$emit('init')
     },
     /**
      * Import all accounts
      */
     async importFromJson () {
+      let accounts = this.accounts.slice()
       let data = await this.importJson('Import Accounts')
 
       if (data && data.length) {
-        data = this.setUniqueIds(this.items, data)
+        data = this.setUniqueIds(accounts, data)
 
-        this.items = [...this.items, ...data]
+        accounts = [...accounts, ...data]
 
-        await this.saveToLocalStorage('accounts', this.items)
-        this.init()
+        await this.saveToLocalStorage('accounts', accounts)
+
+        this.$emit('init')
       }
     },
     /**
      * Export all accounts
      */
     exportToJson () {
-      const data = this.items.slice().map(val => {
+      let accounts = this.accounts.slice()
+
+      accounts = accounts.map(val => {
         delete val.id
 
         return val
       })
 
-      this.exportJson(data, 'Export Accounts To JSON')
+      this.exportJson(accounts, 'Export Accounts To JSON')
     }
   }
 }
