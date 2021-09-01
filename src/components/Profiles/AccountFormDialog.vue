@@ -154,7 +154,11 @@ export default {
      * Display account lists to text area
      */
     accountList () {
-      const data = this.accounts.slice().map(value => (value.email && value.password) ? `${value.email}:${value.password}` : value.email)
+      const data = this.accounts.slice().map(value => {
+        const values = Object.values(value).filter(v => v)
+
+        return values.join(':')
+      })
 
       return data.join('\n')
     },

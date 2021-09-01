@@ -30,3 +30,4 @@ pnpm-debug.log*
 accounts.json
 billings.json
 groups.json
+proxies.json
