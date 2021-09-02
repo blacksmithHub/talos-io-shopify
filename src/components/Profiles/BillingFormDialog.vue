@@ -7,9 +7,7 @@
     <v-form @submit.prevent="submit">
       <v-card rounded>
         <v-card-title class="px-0 pt-0">
-          <v-toolbar
-            flat
-          >
+          <v-toolbar flat>
             <v-toolbar-title
               class="text-capitalize"
               v-text="title"
@@ -692,8 +690,6 @@ export default {
         expiry: null,
         cvv: null
       }
-
-      this.$emit('init')
     },
     /**
      * Submit form event
@@ -714,7 +710,9 @@ export default {
 
       await this.store()
 
-      this.close()
+      if (this.isEditMode) this.close()
+
+      this.$emit('init')
     },
     /**
      * Store form to JSON

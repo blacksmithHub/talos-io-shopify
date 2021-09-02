@@ -42,6 +42,21 @@ export default {
       }
     },
     /**
+     * Delete json file
+     *
+     * @param {*} filename
+     * @returns
+     */
+    async deleteFromLocalStorage (filename) {
+      try {
+        return fs.unlinkSync(`${filename}.json`, 'utf8')
+      } catch (error) {
+        console.log(error)
+
+        return null
+      }
+    },
+    /**
      * Set unique IDs to newly added records
      *
      * @param {*} oldData

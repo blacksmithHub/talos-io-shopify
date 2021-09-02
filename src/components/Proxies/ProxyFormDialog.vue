@@ -9,6 +9,7 @@
         <v-card-title class="px-0 pt-0">
           <v-toolbar
             flat
+            dense
           >
             <v-toolbar-title
               class="text-capitalize"
@@ -42,8 +43,17 @@
             :error-messages="proxiesErrors"
             auto-grow
             rows="10"
+            hide-details="auto"
             @blur="$v.$touch()"
             @input="onInputTextArea"
+          />
+
+          <v-checkbox
+            v-model="split"
+            color="primary"
+            dense
+            label="Split proxies"
+            hide-details
           />
         </v-card-text>
 
@@ -159,8 +169,6 @@ export default {
       this.selectedId = null
       this.name = null
       this.proxies = []
-
-      this.$emit('init')
     },
     /**
      * Submit form event
@@ -172,7 +180,9 @@ export default {
 
       await this.store()
 
-      this.close()
+      if (this.isEditMode) this.close()
+
+      this.$emit('init')
     },
     /**
      * On text area input event
@@ -208,28 +218,54 @@ export default {
         .catch(err => console.log(err))
 
       if (this.isEditMode) {
-        data = data.map((val) => {
-          if (val.id === this.selectedId) {
-            val.name = this.name || `proxy${val.id}`
-            val.items = this.proxies
-          }
+        if (this.split) {
+          const index = data.findIndex(v => v.id === this.selectedId)
 
-          return val
-        })
+          data.splice(index, 1)
+
+          data = this.mergeNewRecords(data)
+        } else {
+          data = data.map((val) => {
+            if (val.id === this.selectedId) {
+              val.name = this.name || `proxy${val.id}`
+              val.items = this.proxies
+            }
+
+            return val
+          })
+        }
       } else {
-        let newRecords = this.setUniqueIds(data, [{
-          name: this.name,
-          items: this.proxies
-        }])
-
-        newRecords = this.setUniqueNames('proxy', newRecords)
-
-        data = [...data, ...newRecords]
+        data = this.mergeNewRecords(data)
       }
 
       this.saveToLocalStorage('proxies', data)
 
       this.loading = false
+    },
+    /**
+     * Merge old and new records
+     */
+    mergeNewRecords (data) {
+      let newRecords = []
+
+      if (this.split) {
+        this.proxies.forEach(el => {
+          newRecords.push({
+            name: null,
+            items: [{ ...el }]
+          })
+        })
+      } else {
+        newRecords.push({
+          name: this.name,
+          items: this.proxies
+        })
+      }
+
+      newRecords = this.setUniqueIds(data, newRecords)
+      newRecords = this.setUniqueNames(this.name || 'proxy', newRecords)
+
+      return [...data, ...newRecords]
     }
   },
   /**

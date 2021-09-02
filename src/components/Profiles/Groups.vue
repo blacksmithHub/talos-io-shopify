@@ -41,6 +41,8 @@
             fixed-header
             hide-default-header
             style="width: 100%"
+            dense
+            class="table"
           >
             <template v-slot:item.total="{item}">
               <span v-text="`Total: ${item.items.length}`" />
@@ -154,3 +156,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.table >>> td {
+  max-width: 100px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+</style>

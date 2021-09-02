@@ -183,8 +183,6 @@ export default {
       this.selected = {}
       this.accounts = []
       this.isEditMode = false
-
-      this.$emit('init')
     },
     /**
      * Submit form event
@@ -202,7 +200,9 @@ export default {
 
       await this.store()
 
-      this.close()
+      if (this.isEditMode) this.close()
+
+      this.$emit('init')
     },
     /**
      * On text area input event

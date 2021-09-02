@@ -106,6 +106,7 @@
                 item-key="id"
                 fixed-header
                 hide-default-header
+                dense
               >
                 <template v-slot:item.actions="{item}">
                   <div class="text-right">
@@ -261,8 +262,6 @@ export default {
 
       this.name = null
       this.items = []
-
-      this.$emit('init')
     },
     /**
      * Submit form event
@@ -278,7 +277,9 @@ export default {
 
       await this.store()
 
-      this.close()
+      if (this.isEditMode) this.close()
+
+      this.$emit('init')
     },
     /**
      * Store form to JSON

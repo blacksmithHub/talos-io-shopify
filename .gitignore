@@ -31,3 +31,5 @@ accounts.json
 billings.json
 groups.json
 proxies.json
+tasks.json
+task-*.json
